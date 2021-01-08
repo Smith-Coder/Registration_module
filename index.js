@@ -7,9 +7,7 @@ const path=require('path');
 const port = 3000;
 
 app.use(express.static(path.join(__dirname,'static')));
-
 app.use(bodyParser.urlencoded({extended: false}))
-
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
@@ -28,10 +26,10 @@ connection.connect(function(err){
 })
 
 app.get('/', (req, res) => {
-  res.render('registration')
+  res.render('registration');
 })
 
-app.post('/register',function(req,res){
+app.post('/submit',function(req,res,next){
   var mail1=req.body.email1;
   var mail2=req.body.email2;
   var discordName1=req.body.discord1;
@@ -42,46 +40,47 @@ app.post('/register',function(req,res){
 
   connection.query('SELECT teamname FROM teams', function (err,teamnames) {
     if (err) throw err
-    for(var i=0;i<teamnames;i++)
+    for(var i=0;i<teamnames.length;i++)
     {
       var count=0;
       if(teamnames[i].teamname==teamnam){
-        count++;
+        count=count+1;
+        
       }
     }
-    connection.query('SELECT email_1 FROM teams', function (err,emails1) {
+    connection.query('SELECT email_1,email_2 FROM teams', function (err,emails1) {
       if (err) throw err
-    for(var i=0;i<emails1;i++)
+    for(var i=0;i<emails1.length;i++)
     {
       var count1=0;
-      if(emails1[i].email_1==mail1){
+      if(emails1[i].email_1==mail1 || emails1[i].email_2==mail1){
         count1++;
       }
     }
-    connection.query('SELECT email_2 FROM teams', function (err,emails2) {
+    connection.query('SELECT email_1,email_2 FROM teams', function (err,emails2) {
       if (err) throw err
-    for(var i=0;i<emails2;i++)
+    for(var i=0;i<emails2.length;i++)
     {
       var count2=0;
-      if(emails2[i].email_2==mail2){
+      if(emails2[i].email_2==mail2 || emails2[i].email_1==mail2){
         count2++;
       }
     }
-    connection.query('SELECT member_1_discord_name FROM teams', function (err,discordname1) {
+    connection.query('SELECT member_1_discord_name,member_2_discord_name FROM teams', function (err,discordname1) {
       if (err) throw err
-    for(var i=0;i<discordname1;i++)
+    for(var i=0;i<discordname1.length;i++)
     {
       var count3=0;
-      if(discordname1[i].member_1_discord_name==discordName1){
+      if(discordname1[i].member_1_discord_name==discordName1 || discordname1[i].member_2_discord_name==discordName1){
         count3++;
       }
     }
-    connection.query('SELECT member_2_discord_name FROM teams', function (err,discordname2) {
+    connection.query('SELECT member_1_discord_name,member_2_discord_name FROM teams', function (err,discordname2) {
       if (err) throw err
-    for(var i=0;i<discordname2;i++)
+    for(var i=0;i<discordname2.length;i++)
     {
       var count4=0;
-      if(discordname2[i].member_2_discord_name==discordName2){
+      if(discordname2[i].member_2_discord_name==discordName2 || discordname2[i].member_1_discord_name==discordName2){
         count4++;
       }
     }
@@ -92,6 +91,14 @@ app.post('/register',function(req,res){
   }
   else if(mailck1!="@gmail.com" && mailck2!="@gmail.com"){
     const respond="Enter email address of the format example@gmail.com";
+    res.render('registration',{respond})
+  }
+  else if(mail1==mail2){
+    const respond="both members email id cannot be same";
+    res.render('registration',{respond})
+  }
+  else if(discordName1==discordName2){
+    const respond="both members discord name cannot be same";
     res.render('registration',{respond})
   }
   else if(count>0)

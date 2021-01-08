@@ -8,7 +8,7 @@
         <div class="col-md-2"></div>
           <div class="col-md-8">
           <div class="jumbotron"> 
-              <form name="myForm" method="post" action="register">
+              <form name="myForm" method="post" action="submit">
                     <div class="form-group">
                       <label for="team">Enter your new team name:</label>
                       <input type="text" class="form-control" id="team" placeholder="team name" name="team">
@@ -37,7 +37,7 @@
                       <label for="discord2">Second member discord name:</label>
                       <input type="text" class="form-control" id="discord2" placeholder="discord name" name="discord2">
                   </div>
-                    <% if(respond){ %>
+                    <% if(locals.respond){ %>
                     <div class="alert alert-danger" role="alert">
 	                 <h3><%=respond%><h3>
 	                </div>
